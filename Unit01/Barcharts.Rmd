@@ -70,7 +70,8 @@ p
 ## Workforce dataset
 Let/s have a look at the structure of the tattoos dataset:
 ```{r str-workforce, echo=TRUE}
-workers <- read.csv("workforce.csv")
+library(readr)
+workers <- read_csv("workforce.csv")
 str(workers)
 ```
 
@@ -80,3 +81,18 @@ workers
 ```
 
 I admit defeat for now. I need to rest on it. I must admit I can't see how to make a barchart from data that has already been aggregated.
+```{r echo=TRUE}
+library(ggplot2)
+p<-ggplot(workers, aes(`Occupation type`, Male)) +
+geom_bar(stat="identity", width = 0.75, colour="black", fill="white") +
+theme_bw() +
+  labs(
+       title="Bar chart produced in Ggplot2",     
+       y="Count (Male)",
+       x="Occupation Type" 
+       ) +
+  theme( panel.grid = element_line(colour = "white"),
+         axis.text.x = element_text(angle=45, vjust=0.6)
+  )
+p
+```
