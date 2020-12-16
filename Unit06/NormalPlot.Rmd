@@ -1,0 +1,180 @@
+---
+output:
+  html_document
+---
+
+```{r all_chunks, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+suppressWarnings(suppressMessages(suppressPackageStartupMessages(library(tidyverse))))
+
+```
+
+# Plotting a normal distribution
+
+Errors now fixed.
+
+<br><br>\vspace{10mm}
+
+```{r label = "basic-nplot", echo =F, error = F, warnings=F, messages = F, out.width = "80%", fig.asp = 0.6, fig.align = "center"}
+
+library(tidyverse)
+
+# Enter required values in this section:
+# ---------------------------------------------------------------------------------------------------------------------------------
+# What does the random variable describe:
+x_name <- "standard normal distribution"
+
+# Parameters mean and standard deviation:
+mu <- 0
+sigma <- 1
+
+# Chosen value of random variable to use as bound of shaded area:
+xval <- -0.5
+
+# ---------------------------------------------------------------------------------------------------------------------------------
+
+tick_posn <- c(-3, -2, -1, 0 , 1, 2, 3)
+
+ymax <-  dnorm(mu, mean = mu, sd = sigma)
+
+xlim_lo <- 0
+xlim_hi <- 0
+
+if (xval < mu | xval == mu) {
+  auc_lo <- qnorm(0.0001, mean = mu, sd = sigma)
+  auc_hi <- xval
+  xlim_lo <- mu - (3.5 * sigma)
+  xlim_hi <- xval
+} else {
+  auc_lo <- xval
+  auc_hi <- qnorm(0.9999, mean = mu, sd = sigma)
+  xlim_lo <- xval
+  xlim_hi <- mu + (3.5 * sigma)
+}
+
+clr <- "darkred"
+
+funcShadeAUC <- function(xval) {
+  y <- dnorm(xval, mean = mu, sd = sigma)
+  y[xval < auc_lo | xval > auc_hi] <- NA
+  return(y)
+}
+
+base <- ggplot()
+
+base +
+  geom_function(
+    fun = dnorm, 
+    args = list(mean = mu, sd = sigma), 
+    colour = clr
+  ) +
+  stat_function(
+    fun = funcShadeAUC,
+    geom = "area",
+    fill = clr,
+    alpha=0.2, 
+    xlim = c(xlim_lo, xlim_hi)
+  ) +
+  geom_segment(
+    aes(
+      x = mu, 
+      y = 0, 
+      xend = mu, 
+      yend = dnorm(mu, mean = mu, sd = sigma)
+    ), 
+    linetype = "dotted", 
+    colour = clr, 
+    alpha = 0.5
+  ) +
+  geom_segment(
+    aes(
+      x = mu, 
+      y = 0, 
+      xend = mu, 
+      yend = dnorm(mu, mean = mu, sd = sigma)
+    ), 
+    linetype = "dotted", 
+    colour = clr, 
+    alpha = 0.5
+  ) +
+  geom_segment(
+    aes(
+      x = mu - sigma, 
+      y = 0, 
+      xend = mu - sigma, 
+      yend = dnorm(mu - sigma, mean = mu, sd = sigma)
+    ), 
+    linetype = "dotted", 
+    colour = clr, 
+    alpha = 0.5
+  ) +
+  theme_bw() + 
+  theme(
+    text = element_text(family="serif")
+  ) +
+  geom_segment(
+    aes(
+      x = mu - (2 * sigma), 
+      y = 0, 
+      xend = mu - (2 * sigma), 
+      yend = dnorm(mu - (2 * sigma), mean = mu, sd = sigma)
+    ), 
+    linetype = "dotted", 
+    colour = clr, 
+    alpha = 0.5
+  ) +
+  geom_segment(
+    aes(
+      x = mu + sigma, 
+      y = 0, 
+      xend = mu + sigma, 
+      yend = dnorm(mu + sigma, mean = mu, sd = sigma)
+    ), 
+    linetype = "dotted", 
+    colour = clr, 
+    alpha = 0.5
+  ) +
+  theme_bw() + 
+  geom_segment(
+    aes(
+      x = mu + (2 * sigma), 
+      y = 0, 
+      xend = mu + (2 * sigma), 
+      yend = dnorm(mu + (2 * sigma), mean = mu, sd = sigma)
+    ), 
+    linetype = "dotted", 
+    colour = clr, 
+    alpha = 0.5
+  ) +
+  theme_bw() + 
+  theme(
+    text = element_text(family="serif")
+  ) +
+  labs(
+    title = paste(
+      "Normal distribution of random variable with \nmean", sep = " ", 
+      mu, 
+      "and standard deviation", 
+      sigma, 
+      "."), 
+    subtitle = "", 
+    caption = "",  
+    y = "Probability",
+    x = paste("The ", x_name, sep = "") 
+  ) +
+  scale_x_continuous(
+    expand = c(0, 0), # gap between axis and (0, 0)
+    limits = c(mu - (3.5 * sigma), mu + (3.5 * sigma)) 
+    # breaks = mu  + (tick_posn * sigma),
+    # labels = c("-3sd", "-2sd", "-1sd", mu, "+1sd", "+2sd", "+3sd")
+  ) +
+  scale_y_continuous(
+    limits = c(0, round(ymax * 1.1, digits = 2)),
+    breaks = seq(0, ymax * 1.1, by = 0.05),
+    expand = c(0, 0)
+  ) +
+  theme(
+    panel.grid = element_line(colour = "white")
+  )
+
+```
