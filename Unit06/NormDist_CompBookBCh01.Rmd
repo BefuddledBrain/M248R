@@ -3,7 +3,7 @@ output:
   pdf_document:
     latex_engine: pdflatex
     keep_tex: true
-    template: "o:/dtma/dt-tma.tex"
+    template: "d:/pathto/dt-tma.tex"
 
 fontsize: 11pt
 
@@ -17,11 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r label = "load-pkgs", echo =FALSE, error = FALSE, warnings=FALSE, messages = FALSE}
 
-packages <- c(
-"tidyverse", "ggrepel", "ggridges", "ggtext", "ggthemes", "ggstatsplot", "ggforce", "rmarkdown", "xaringan", "xaringanthemer", "kableExtra", "shiny", "corrr", "ggdark", "ggsci", "grid", "gridExtra", "showtext", "rcartocolor", "patchwork", "cowplot", "rvest", "jsonlite", "colorspace", "data.table", "latex2exp", "Hmisc", "broom", "reticulate"
-)
-
-xfun::pkg_attach(packages, install = TRUE, message = FALSE)
+library(tidyverse)
 
 ```
 \pagestyle{empty}
