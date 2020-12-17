@@ -3,7 +3,7 @@ output:
   pdf_document:
     latex_engine: pdflatex
     keep_tex: true
-    template: "d:/pathto/dt-tma.tex"
+    template: "d:/pathto/template.tex"    # TEX file available from 'https://github.com/BefuddledBrain/M248R/edit/main/' 
 
 fontsize: 11pt
 
