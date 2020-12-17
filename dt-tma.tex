@@ -1,0 +1,177 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+
+% Document class ----------------------------------------------------------------
+\documentclass[
+  a4paper,
+  fleqn]{article}
+
+% Fonts -------------------------------------------------------------------------
+%\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+
+% Geometry ----------------------------------------------------------------------
+\usepackage{marginnote}
+\reversemarginpar
+\usepackage[left=35mm, right=25mm, top=20mm, bottom=20mm, headheight=14mm]{geometry}
+
+% Maths -------------------------------------------------------------------------
+\usepackage{amsmath, amssymb,amsthm, amsfonts}
+\usepackage{array, mathtools, cancel}
+
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+% Tikz and Pgfplots ---------------------------------------------------------------
+% Uncomment to use
+% \RequirePackage{pgfplots}
+% \RequirePackage{pgfplotstable}
+% \RequirePackage{tikz}
+% \RequirePackage{pgf}
+
+% Re-enable this group if Tikz is used:
+% \usetikzlibrary{shapes.geometric,pgfplots.groupplots}
+% \usetikzlibrary{positioning,arrows,patterns,intersections,through}
+% \usetikzlibrary{calc,math}
+
+% Re-enable this group if PgfPlots is used:
+% \usepgfplotslibrary{polar} 
+% \pgfplotsset{width=10cm,compat=1.9}
+
+% Fix shaded chunk ----------------------------------------------------------------
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+% Headers and footers -------------------------------------------------------------
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancypagestyle{plain}{\pagestyle{fancy}}
+\fancyhead[L]{$params.name1$ $params.name2$: $params.id$}
+\fancyhead[R]{\today}
+\fancyhead[C]{$params.module$:   TMA $params.tma$}%{M248 TMA00}
+\fancyfoot[C]{\ Page \thepage \ of \pageref{LastPage}}
+
+% Misc -----------------------------------------------------------------------------
+\usepackage[UKenglish]{babel}
+\usepackage{pdfpages, upgreek, verbatim, enumerate}
+
+% Define lengths -------------------------------------------------------------------
+\setlength{\headwidth}{\textwidth}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{5mm}
+\setlength{\mathindent}{10 mm}
+\renewcommand{\baselinestretch}{1.0}
+
+% Initialise counters --------------------------------------------------------------
+\newcounter{Eq}
+\numberwithin{equation}{Eq}
+
+% Redefine \[..\] to enable equation numbering -------------------------------------
+\newcommand{\myequation}{\begin{equation}}\let\[\myequation
+\newcommand{\myendequation}{\end{equation}}\let\]\myendequation
+
+% Correct brackets for fractions with pmod -----------------------------------------
+\makeatletter
+\DeclarePairedDelimiterX{\pmodx}[1]{(}{)}{{\operator@font mod}\mkern6mu#1}
+\renewcommand{\pmod}{%
+  \allowbreak
+  \if@display\mkern18mu\else\mkern8mu\fi
+  \pmodx
+}
+\makeatother
+
+% Assorted stuff from OU tma.sty ---------------------------------------------------
+\newcommand{\e}{\ensuremath{\mathrm{e}}}
+\newcommand{\ii}{\ensuremath{\mathrm{i}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\providecommand{\C}{\ensuremath{\mathbb{C}}}
+\renewcommand{\C}{\ensuremath{\mathbb{C}}}
+\newcommand{\Rr}{\ensuremath{\mathcal{R}}}
+\newcommand{\ve}[1]{\mathbf{#1}}
+\newcommand{\st}{\ensuremath{^\mathrm{st}}}
+\newcommand{\nd}{\ensuremath{^\mathrm{nd}}}
+\newcommand{\rd}{\ensuremath{^\mathrm{rd}}}
+\newcommand{\nth}{\ensuremath{^\mathrm{th}}}
+\renewcommand{\vec}[1]{\overrightarrow{#1}}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\newcommand{\rect}{\ensuremath{\sqsubset\!\!\sqsupset}}
+\newcommand{\comb}[2]{\ensuremath{^{#1}C_{#2}}}
+\newcommand{\perm}[2]{\ensuremath{^{#1}P_{#2}}}
+\DeclareMathOperator{\re}{Re}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\Arg}{Arg}
+\DeclareMathOperator{\Wnd}{Wnd}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Orb}{Orb}
+\DeclareMathOperator{\Stab}{Stab}
+\DeclareMathOperator{\Fix}{Fix}
+\newcommand{\ph}[1]{\hphantom{#1}}
+\newcommand{\h}[1]{\hspace{#1 mm}}
+\newcommand{\vs}[1]{\vspace{#1 mm}}
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+$body$
+\end{document}
