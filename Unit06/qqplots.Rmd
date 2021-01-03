@@ -1,0 +1,126 @@
+---
+output:
+  pdf_document:
+    latex_engine: pdflatex
+    keep_tex: true
+    template: "o:/dtma/dt-tma.tex"    # replace with "drive:/path/to/template.tex"
+
+fontsize: 11pt
+
+linestretch: 1.0
+---
+
+```{r all_chunks, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+```{r label = "load-pkgs", echo =FALSE, error = FALSE, warnings=FALSE, messages = FALSE}
+
+packages <- c("tidyverse", "kableExtra")
+# "tidyverse", "ggrepel", "ggridges", "ggtext", "ggthemes", "ggstatsplot", "ggforce", "rmarkdown", "xaringan", "xaringanthemer", "kableExtra", "shiny", "corrr", "ggdark", "ggsci", "grid", "gridExtra", "showtext", "rcartocolor", "patchwork", "cowplot", "rvest", "jsonlite", "colorspace", "data.table", "latex2exp", "Hmisc", "broom", "reticulate"
+# )
+
+xfun::pkg_attach(packages, install = TRUE, message = FALSE)
+
+```
+
+```{r label = "data", echo =FALSE, error = FALSE, warnings=FALSE, messages = FALSE}
+options(scipen = 999, digits = 4)
+
+df <- read.csv('o:/M248/data/csvfiles/coins.csv') %>%    # adjust path for source of your data (can be a URL)
+  rename(xi = 1) %>% 
+  select(xi) %>%
+  arrange(xi) %>% 
+  mutate(
+    i = 1:length(xi), 
+    alpha = i / (1 + length(xi)), 
+    yi = qnorm(alpha, mean = 0, sd = 1)) %>% 
+  relocate(i, .before = xi)
+
+lmcalc<-lm(yi ~ xi, data = df)
+
+m <- format(signif(unname(coef(lmcalc)[2]), digits = 3), nsmall = 2)
+c <- format(signif(unname(coef(lmcalc)[1]), digits = 4), nsmall = 2)
+eq_text <- paste("y = ",m,"x + ",c, sep="")
+```
+
+\pagestyle{empty}
+# QQ plots
+
+\vspace{10mm}
+
+We can compare a sample with a known distribution by using qq plots, which do not require parameters and are easy to interpret.
+
+If we have a random sample of size \(n\) to compare to a standard normal distribution, we can order the data points from smallest to largest to produce \(x_1, x_2, \ldots, x_n\). Then we compare the ordered data points to the expected value of the ordered data points \(q_{1/(n+1)}, q_{2/(n+1)}, \ldots, q_{n/(n+1)}\). Finally, we plot the ordered pairs \(x_n, q_{i/(n+1)}\). This plot is called a \textbf{standard normal plot} or a \textbf{qq plot}.
+
+\vspace{10mm}
+
+\textbf{\large\textsf{Reproducing figure 29 in M248, Book B, page 39:}}
+\vspace{5mm}
+
+```{r label = "table", echo = FALSE, error = FALSE, warnings=FALSE, messages = FALSE}
+kbl(df, caption = "Table of data and calculations", format = "latex", booktabs = T) %>%
+  kable_styling(
+    latex_options = c("striped", "hold_position")
+    ) %>%
+  column_spec(1, width = "1cm") %>%
+  column_spec(c(2:3), width = "2cm") %>%
+  column_spec(4, width = "2.5cm")
+```
+
+\vspace{8mm}
+
+```{r label = 'plot', echo = FALSE, out.width = "80%", fig.asp = 0.6, fig.align = "left", fig.cap = "Normal probability plot"}
+ggplot(data = df, 
+       aes(
+         x = xi, 
+         y = yi
+       )
+  ) +
+  geom_point(
+    colour = "darkred",
+    fill = "white",
+    na.rm = TRUE,
+    shape = 1,
+    size = 2
+    ) + 
+  geom_smooth(
+    method = "lm", 
+    formula= y~x, 
+    se = FALSE,
+    colour = "darkred",
+    na.rm = TRUE,
+    size = 0.5
+    ) +
+  annotate(
+    "text",
+    x = 7.25, 
+    y = 1.4, 
+    label = eq_text, 
+    parse = FALSE
+    ) +
+  scale_y_continuous(
+    limits = c(-2.2, 2.2), 
+	   minor_breaks = seq(from = -4, to = 4, by = 0.1)
+    ) + 
+   scale_x_continuous(
+     limits = c(5.5, 8)
+     ) +
+  theme_bw() +
+  labs(
+    title="", 
+    y="Normal scores",
+    x="Silver content of Byzantine coins"
+    ) + 
+  theme(
+    plot.background = element_blank(),  
+    panel.background = element_blank(), 
+    panel.grid.major.y = element_line(colour = "grey90"),       # element_blank(),
+    panel.grid.minor.y = element_line(colour = "grey95"),       # element_blank(), 
+    panel.border = element_blank(), 
+    axis.line = element_line()
+  )
+```
+
+
