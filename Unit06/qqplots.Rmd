@@ -3,7 +3,7 @@ output:
   pdf_document:
     latex_engine: pdflatex
     keep_tex: true
-    template: "o:/dtma/dt-tma.tex"    # replace with "drive:/path/to/template.tex"
+    template: "o:/dtma/dt-tma.tex"    # replace with "drive:/path/to/template.tex" (my template.tex is available in top folder of M248R repository)
 
 fontsize: 11pt
 
