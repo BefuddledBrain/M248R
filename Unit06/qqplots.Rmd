@@ -38,6 +38,7 @@ df <- read.csv('o:/M248/data/csvfiles/coins.csv') %>%    # adjust path for sourc
     yi = qnorm(alpha, mean = 0, sd = 1)) %>% 
   relocate(i, .before = xi)
 
+# Extracting the coefficients from the regression equation for the linear model
 lmcalc<-lm(yi ~ xi, data = df)
 
 m <- format(signif(unname(coef(lmcalc)[2]), digits = 3), nsmall = 2)
