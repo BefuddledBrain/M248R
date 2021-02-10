@@ -3,7 +3,7 @@ output:
   pdf_document:
     latex_engine: pdflatex
     keep_tex: true
-    template: "o:/dtma/tex/dt-tma.tex"
+    template: "x:/path/to/template.tex"
 ---
 
 ```{r all_chunks, include=FALSE}
@@ -11,19 +11,14 @@ knitr::opts_chunk$set(echo = FALSE,
                       error = FALSE, 
                       warning =FALSE, 
                       message = FALSE, 
-                      include = TRUE, 
-                      fig.path = 'o:/dtma/figs')
+                      include = TRUE)
 ```
 
 ```{r label = "load-pkgs"}
-  packages <- c("ggplot2", "latex2exp", "pwr")
-xfun::pkg_attach(packages, install = TRUE, message = FALSE)
-# "tidyverse", "ggrepel", "ggridges", "ggtext", "ggthemes", 
-# "ggstatsplot", "ggforce", "rmarkdown", "xaringan", "xaringanthemer", 
-# "kableExtra", "shiny", "corrr", "ggdark", "ggsci", 
-# "grid", "gridExtra", "showtext", "rcartocolor", "patchwork", "cowplot", 
-# "rvest", "jsonlite", "colorspace", "data.table", 
-# "latex2exp", "Hmisc", "broom", "reticulate"
+install.packages <- c("ggplot2", "latex2exp", "pwr")
+library(ggplot2)
+library(latex2exp)
+library(pwr)
 ```
 \pagestyle{empty}
 
@@ -62,7 +57,7 @@ is to be used in a test of \(H_0: \mu=\mu_0\) with significance level \(\alpha\)
 If we use the values of parameters given in Computer Activity 31 of Book 2, we can use R to calculate power using the formula given in \textbf{M248}:
 
 ```{r label = "man-pwr", echo=TRUE}
-# From Book 2, CA31
+# From Computer Book B, CA31
 num <- 25
 mu0 <- 5
 mu1 <- 7
