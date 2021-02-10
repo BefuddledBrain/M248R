@@ -1,0 +1,241 @@
+---
+output:
+  pdf_document:
+    latex_engine: pdflatex
+    keep_tex: true
+    template: "o:/dtma/tex/dt-tma.tex"
+---
+
+```{r all_chunks, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      error = FALSE, 
+                      warning =FALSE, 
+                      message = FALSE, 
+                      include = TRUE, 
+                      fig.path = 'o:/dtma/figs')
+```
+
+```{r label = "load-pkgs"}
+  packages <- c("ggplot2", "latex2exp", "pwr")
+xfun::pkg_attach(packages, install = TRUE, message = FALSE)
+# "tidyverse", "ggrepel", "ggridges", "ggtext", "ggthemes", 
+# "ggstatsplot", "ggforce", "rmarkdown", "xaringan", "xaringanthemer", 
+# "kableExtra", "shiny", "corrr", "ggdark", "ggsci", 
+# "grid", "gridExtra", "showtext", "rcartocolor", "patchwork", "cowplot", 
+# "rvest", "jsonlite", "colorspace", "data.table", 
+# "latex2exp", "Hmisc", "broom", "reticulate"
+```
+\pagestyle{empty}
+
+\textbf{\Huge\textsf{Power and Sample Size}}
+\vspace{5mm}
+
+We shall cover power and sample size calculations, using R with the formula given in Unit 09 and then using an R function. First, a reminder what the Handbook says:
+
+\vspace{5mm}
+\textbf{\Large\textsf{Power calculation}}
+\vspace{-3mm}
+
+Suppose that a sample of size \(n\) is obtained from a population
+distributed as \(N(\mu, \sigma^2)\), where \(\sigma^2\) is known, and the test statistic
+\[
+  Z_1 = \frac{\overline{X}-\mu_0}{\sigma/\sqrt{n}} \nonumber
+\]
+is to be used in a test of \(H_0: \mu=\mu_0\) with significance level \(\alpha\). Let \(d > 0\).
+\begin{itemize}
+  \item When the alternative hypothesis is \(H_1: \mu > \mu_0\) and the true value
+        of \(\mu\) is \(\mu_0 + d\) then the \textbf{power of the one-sided test} is
+        \[
+          1 - \Phi \left(q_{(1-\alpha)} - \frac{d}{\sigma/\sqrt{n}}\right) \nonumber
+        \]
+  \item When the alternative hypothesis is \(H_1: \mu \not= \mu_0\) and the true value
+        of \(\mu\) is \(\mu_0 \pm d\), where \(d\) is not small, then the \textbf{power of the two-sided test} is
+        \[
+          1 - \Phi \left(q_{(1-\frac{\alpha}{2})} - \frac{d}{\sigma/\sqrt{n}}\right) \nonumber
+        \]
+\end{itemize}
+
+\vspace{5mm}
+\textbf{\normalsize\textsf{Power calculation by formula}}
+\vspace{-3mm}
+
+If we use the values of parameters given in Computer Activity 31 of Book 2, we can use R to calculate power using the formula given in \textbf{M248}:
+
+```{r label = "man-pwr", echo=TRUE}
+# From Book 2, CA31
+num <- 25
+mu0 <- 5
+mu1 <- 7
+diff <- mu1 - mu0
+stdev <- 10
+alpha <- 0.05
+
+# Calculation by formula:
+z1 <- qnorm(1-alpha)-(diff/(stdev/sqrt(num)))
+pwr.man <- 1 - pnorm(z1)
+```
+This gives power as `r pwr.man`, which is the same result as given by Minitab.
+
+\newpage{}
+
+\textbf{\normalsize\textsf{Power calculation by function}}
+\vspace{-3mm}
+
+To calculate power using an R function, we use the \texttt{pwr.norm.test} of the \texttt{pwr} package.
+
+\texttt{pwr.norm.test(d = NULL, n = NULL, sig.level = 0.05, power = NULL, alternative = c("two.sided","less","greater"))}
+
+\begin{tabular}
+  {p{5mm} p{25mm} p{75mm}}
+    & d               & Effect size is d = (mu1-mu0)sd \\
+    & n               & Number of observations \\
+    & sig.level       & Significance level (Type I error probability) \\
+    & power           & Power of test (1 minus Type II error probability) \\
+    & alternative     & One of "two.sided" (default), "greater", or "less" \\
+\end{tabular}
+It is a \textbf{one-sample test}. We pass the parameter (one of \textbf{d}, \textbf{n}, \textbf{power} or \textbf{sig.level}) that we want to calculate as \texttt{NULL} and it will be calculated from the others. The function returns a list of the arguments (including the computed one) and adds \textbf{Method} and \textbf{Notes} elements.
+
+The specific value that we want can be isolated using, e.g., 
+\texttt{var.name\$power}.
+
+```{r label = "r-pwr", echo=TRUE}
+# The pwr package uses d = (mu1-mu0)/sd
+pwr.r <- pwr.norm.test(
+                      power = NULL, 
+                      n = num, 
+                      d = diff/stdev, 
+                      sig.level = alpha, 
+                      alternative="greater")$power
+```
+
+The power returned by R is `r pwr.r`, which is the same as that from both manual calculation and Minitab.
+
+```{r label = "plt-pwr", echo=FALSE, out.width="85%", fig.align = 'center'}
+# Possible code
+h1 <- "greater"     # "two.sided" (default), "greater", or "less"
+points <- 20
+x.name <- "Effect size"   # or "Sample size"
+x.max <- 8.0  #3.0  (200 for sample size; 8.0 for diff)
+x.num <- seq(1, points, by=1)
+y.int <- pwr.norm.test(d=diff/stdev, n=num, sig.level=0.05, alternative=h1)$power
+# for plotting against sample size:  x.vals <- 10 * x.num
+
+x.vals <- x.num * (x.max / points)
+
+powers <- vector(length=length(x.vals))
+for (i in 1:length(x.vals)) {
+  powers[i] <- pwr.norm.test(
+    n = num,    #d = x.vals[i],  for plotting against sample size
+    d = (x.vals[i])/stdev, # diff/stdev,   for plotting against sample size
+    sig.level = alpha, 
+    alternative = h1
+  )$power
+}
+power.df <- data.frame(x.vals, powers)
+
+ggplot(power.df) + 
+  aes(x=x.vals, y=powers) + 
+  geom_line(
+    colour = "darkred",
+    size = 0.7
+  ) + 
+  geom_point(
+    colour = "darkred",
+    size = 0.7
+  ) + 
+  geom_segment(mapping = aes(x = diff, y = 0), 
+               xend = diff, yend = y.int, 
+               linetype = "dashed", 
+               colour = "darkred", 
+               size = 0.5, 
+               show.legend = FALSE
+  ) + 
+  geom_segment(mapping = aes(x = 0, y.int), 
+               xend = diff, yend = y.int, 
+               linetype = "dashed", 
+               colour = "darkred", 
+               size = 0.5, 
+               show.legend = FALSE
+  ) + 
+  theme_bw() + 
+  labs(
+    title = "Power function", 
+    # subtitle="", 
+    # caption="",  
+    y = "Power",
+    x = x.name 
+  ) +
+  scale_x_continuous(
+    limits = c(0, x.max),     # x.max), 
+    expand = expansion(mult = c(0, 0.01)),  # gap between axis and (0, 0)
+    breaks = seq(0, x.max, by = 1)
+  ) +
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.01)), # gap between axis and (0, 0)
+    limits = c(0, 1), 
+    breaks = seq(0, 1, by = 0.2)
+  ) +
+  theme(
+    panel.grid = element_line(colour = "white"), 
+    plot.title = element_text(size=14)
+  )
+```
+\newpage{}
+
+\textbf{\Large\textsf{Sample size calculation}}
+\vspace{-3mm}
+
+Suppose that a sample of data is to be collected and one of the tests
+described in the previous point is to be performed. Suppose also that
+\(n\) is to be chosen so that the power of the test, when the true
+underlying mean is \(\mu_0 + d\), is equal to a predetermined value \(\gamma\).
+The required sample size is
+
+\begin{itemize}
+  \item For a \textbf{one-sided test}:
+        \[
+          n = \frac{\sigma^2}{d^2} \left( q_{(1-\alpha)} - q_{(1-\gamma)} \right)^2 \nonumber
+        \]
+  \item For a \textbf{two-sided test}:
+        \[
+          n = \frac{\sigma^2}{d^2} \left( q_{(1-\frac{\alpha}{2})} - q_{(1-\gamma)} \right)^2 \nonumber
+        \]
+\end{itemize}
+
+
+\textbf{\normalsize\textsf{Sample size by formula}}
+\vspace{-3mm}
+
+If we again use the values of parameters given in Computer Activity 31 of Book 2, we can use R to calculate sample size using the formula given in \textbf{M248}:
+
+```{r label = "man-size", echo=TRUE}
+# From Book 2, CA31
+# num <- 25
+gamma <- 0.9
+mu0 <- 5
+mu1 <- 7
+diff <- mu1 - mu0
+stdev <- 10
+alpha <- 0.05
+
+# Calculation by formula:
+size <- (stdev^2/diff^2)*(qnorm(1-alpha)-qnorm(1-gamma))^2
+```
+This gives a sample size of `r ceiling(size)`, which is the same result as given by Minitab.
+
+\textbf{\normalsize\textsf{Sample size by function}}
+\vspace{-3mm}
+
+This time we use the same \texttt{pwr} function that we used for the power calculation but by giving the required power 
+and giving a \texttt{NULL} value for \texttt{n}, it returns the sample size needed.
+
+```{r label = "r-size", echo=TRUE}
+# The pwr package uses d = (mu-mu_0)/sd
+pwr.r <- pwr.norm.test(
+                      n = NULL, 
+                      power = gamma, 
+                      d = diff/stdev, 
+                      sig.level = alpha, 
+                      alternative="greater")$n
+```
+This, too, gives a sample size of `r ceiling(size)`, which is the same result as given by both formula and Minitab.
