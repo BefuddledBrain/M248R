@@ -106,75 +106,116 @@ pwr.r <- pwr.norm.test(
 The power returned by R is `r pwr.r`, which is the same as that from both manual calculation and Minitab.
 
 ```{r label = "plt-pwr", echo=FALSE, out.width="85%", fig.align = 'center'}
-# Possible code
-h1 <- "greater"     # "two.sided" (default), "greater", or "less"
-points <- 20
-x.name <- "Effect size"   # or "Sample size"
-x.max <- 8.0  #3.0  (200 for sample size; 8.0 for diff)
-x.num <- seq(1, points, by=1)
-y.int <- pwr.norm.test(d=diff/stdev, n=num, sig.level=0.05, alternative=h1)$power
-# for plotting against sample size:  x.vals <- 10 * x.num
+p.num1 <- 25
+p.num2 <- 100
+p.mu0 <- 5
+p.mu1 <- 7
+p.diff <- p.mu1 - p.mu0
+p.stdev <- 10
+p.alpha <- 0.05
 
+# Possible code
+p.h1 <- "greater"                              # "two.sided" (default), "greater", or "less"
+points <- 20
+x.name <- "Effect size"                        # or "Sample size"
+x.max <- 8.0                                   #3.0  (200 for sample size; 8.0 for p.diff)
+x.num <- seq(1, points, by=1)
+y1.int <- pwr.norm.test(d=p.diff/p.stdev, n=p.num1, sig.level=p.alpha, alternative=p.h1)$power
+y2.int <- pwr.norm.test(d=p.diff/p.stdev, n=p.num2, sig.level=p.alpha, alternative=p.h1)$power
+
+# for plotting against sample size:  x.vals <- 10 * x.num
 x.vals <- x.num * (x.max / points)
 
-powers <- vector(length=length(x.vals))
+powers1 <- vector(length=length(x.vals))
 for (i in 1:length(x.vals)) {
-  powers[i] <- pwr.norm.test(
-    n = num,    #d = x.vals[i],  for plotting against sample size
-    d = (x.vals[i])/stdev, # diff/stdev,   for plotting against sample size
-    sig.level = alpha, 
-    alternative = h1
+  powers1[i] <- pwr.norm.test(
+    n = p.num1,                                #d = x.vals[i],  for plotting against sample size
+    d = (x.vals[i])/p.stdev,                   # p.diff/p.stdev,   for plotting against sample size
+    sig.level = p.alpha, 
+    alternative = p.h1
   )$power
 }
-power.df <- data.frame(x.vals, powers)
+power1.df <- data.frame(x.vals, powers1)
 
-ggplot(power.df) + 
-  aes(x=x.vals, y=powers) + 
+powers2 <- vector(length=length(x.vals))
+for (i in 1:length(x.vals)) {
+  powers2[i] <- pwr.norm.test(
+    n = p.num2,                                # d = x.vals[i],  for plotting against sample size
+    d = (x.vals[i])/p.stdev,                   # p.diff/p.stdev,   for plotting against sample size
+    sig.level = p.alpha, 
+    alternative = p.h1
+  )$power
+}
+power2.df <- data.frame(x.vals, powers2)
+
+aes1 <- aes(x=x.vals, y=powers1)
+aes2 <- aes(x=x.vals, y=powers2)
+
+ggplot(power1.df) + 
   geom_line(
+    aes1, 
     colour = "darkred",
     size = 0.7
   ) + 
   geom_point(
+    aes1, 
     colour = "darkred",
     size = 0.7
   ) + 
-  geom_segment(mapping = aes(x = diff, y = 0), 
-               xend = diff, yend = y.int, 
+  geom_line(
+    aes2, 
+    colour = "darkred",
+    size = 0.7
+  ) + 
+  geom_point(
+    aes2, 
+    colour = "darkred",
+    size = 0.7
+  ) + 
+  geom_segment(mapping = aes(x = p.diff, y = 0), 
+               xend = p.diff, yend = y2.int, 
                linetype = "dashed", 
                colour = "darkred", 
-               size = 0.5, 
                show.legend = FALSE
   ) + 
-  geom_segment(mapping = aes(x = 0, y.int), 
-               xend = diff, yend = y.int, 
+  geom_segment(mapping = aes(x = 0, y1.int), 
+               xend = p.diff, yend = y1.int, 
                linetype = "dashed", 
                colour = "darkred", 
-               size = 0.5, 
+               show.legend = FALSE
+  ) + 
+  geom_segment(mapping = aes(x = 0, y2.int), 
+               xend = p.diff, yend = y2.int, 
+               linetype = "dashed", 
+               colour = "darkred", 
                show.legend = FALSE
   ) + 
   theme_bw() + 
   labs(
-    title = "Power function", 
+    title = paste("Influence of effect size on power for sample sizes of ", p.num1, " and ", p.num2),
     # subtitle="", 
     # caption="",  
     y = "Power",
     x = x.name 
   ) +
   scale_x_continuous(
-    limits = c(0, x.max),     # x.max), 
-    expand = expansion(mult = c(0, 0.01)),  # gap between axis and (0, 0)
+    limits = c(0, x.max),                       # x.max), 
+    expand = expansion(mult = c(0, 0.01)),      # gap between axis and (0, 0)
     breaks = seq(0, x.max, by = 1)
   ) +
   scale_y_continuous(
-    expand = expansion(mult = c(0, 0.01)), # gap between axis and (0, 0)
+    expand = expansion(mult = c(0, 0.01)),      # gap between axis and (0, 0)
     limits = c(0, 1), 
     breaks = seq(0, 1, by = 0.2)
   ) +
   theme(
     panel.grid = element_line(colour = "white"), 
-    plot.title = element_text(size=14)
+    plot.title = element_text(size=12)
   )
 ```
+This plot attempts to reproduce the output from Minitab in Activity 31 but I have added a second plot to show the additional 
+influence of sample size on the power of a test. The sample sizes are contained in the variables \texttt{p.num1} and \texttt{p.num2} 
+if you want to try different sample sizes. Also, for a two-sided z-test, change the value of variable \texttt{p.h1} to "two.sided".
 \newpage{}
 
 \textbf{\Large\textsf{Sample size calculation}}
