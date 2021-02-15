@@ -10,3 +10,4 @@ I have added an Rmarkdown notebook, in which I try ro teach myself how to reprod
 
 Feel free to clone/download my code but feel even more at liberty to suggest improvements or compltely different ways of doing things (including how I am using GitHub).
 Added
+.
