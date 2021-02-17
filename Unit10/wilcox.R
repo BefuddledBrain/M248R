@@ -7,7 +7,7 @@ wilcox.test(a4.dat, exact = FALSE, correct = TRUE)
 coins <- c(-0.6, 1.5, -0.9, 0.6, 1.8, 1.7, 1.1)
 wilcox.test(coins, mu = 0, exact = FALSE)
 
-sh <- read.csv("shoshoni.csv", fileEncoding = "UTF-8-BOM") %>% 
+sh <- read.csv("./Unit10/shoshoni.csv", fileEncoding = "UTF-8-BOM") %>% 
   mutate(
     Diff = Ratio - 0.618, 
     Sign = sign(Diff), 
