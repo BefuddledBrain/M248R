@@ -14,5 +14,3 @@ wilcox.test(sh$rects, mu = (sqrt(5)-1)/2, exact = FALSE)
 # rank(sh[,1], ties.method = "average")
 # abs(sh[,1])
 # sign(sh[,1])
-
-# Just a test
