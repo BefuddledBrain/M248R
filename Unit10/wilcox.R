@@ -7,10 +7,14 @@ wilcox.test(a4.dat, exact = FALSE, correct = TRUE)
 coins <- c(-0.6, 1.5, -0.9, 0.6, 1.8, 1.7, 1.1)
 wilcox.test(coins, mu = 0, exact = FALSE)
 
-sh <- read.csv("./Unit10/shoshoni.csv")
-wilcox.test(sh$rects, mu = (sqrt(5)-1)/2, exact = FALSE)
+sh <- read.csv("shoshoni.csv", fileEncoding = "UTF-8-BOM") %>% 
+  mutate(
+    Diff = Ratio - 0.618, 
+    Sign = sign(Diff), 
+    AbsDiff = abs(Diff), 
+    Rank = rank(AbsDiff), 
+    RankSign = Rank * Sign
+  ) 
+w.plus <-  as.numeric(sh %>% summarise(w.plus = sum(RankSign[RankSign > 0])))
 
-# These are here for potential use:
-# rank(sh[,1], ties.method = "average")
-# abs(sh[,1])
-# sign(sh[,1])
+wilcox.test(sh$Ratio, mu = (sqrt(5)-1)/2, exact = FALSE)
