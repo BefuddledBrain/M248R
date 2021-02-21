@@ -46,7 +46,7 @@ dop.mann_whitney.u <- sum(dop.df$DiagRank[1:dop.lo])
 # Activity 9: aboriginal village size in Alaska and California
 a.df <- data.frame(
   Col_1  = c(23, 26, 30, 33, 42, 45, 45, 50, 50.5, 96, 113, 557, NA), 
-  Col_2      = c(39, 48, 53.5, 55, 57, 66, 77, 79, 108, 121, 162, 197, 309)
+  Col_2  = c(39, 48, 53.5, 55, 57, 66, 77, 79, 108, 121, 162, 197, 309)
 )%>% 
   pivot_longer(
     cols = c("Col_1", "Col_2"),
