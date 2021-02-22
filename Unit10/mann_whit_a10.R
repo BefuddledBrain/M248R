@@ -25,8 +25,10 @@ mem.U <- sum(mem.df$MemoryRank[1:nA])
 mem.E <- (nA*(nA+nB+1))/2
 mem.V <- (nA*nB*(nA+nB+1))/12
 mem.Z <- (mem.U - mem.E)/sqrt(mem.V)
-mem.P <- pnorm(round(mem.Z, 2), mean = 0, sd = 1), 3)) * 2
-  
-#wilcox.test(mem.df$Pleasant, mem.df$Unpleasant, exact = FALSE)
+mem.P <- round((1 - round(pnorm(round(abs(mem.Z), 2), 
+                                mean = 0, sd = 1) ,4)) * 2, 3)
+# all the rounding is to mimic statistical tables (so that 
+# the answer is the same as the textbook answer)
 
-
+# wilcox.test(mem.df$Pleasant, mem.df$Unpleasant, exact = FALSE)
+# this only works on mem.df before piped transformations
