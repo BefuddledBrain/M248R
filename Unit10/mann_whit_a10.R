@@ -25,8 +25,7 @@ mem.U <- sum(mem.df$MemoryRank[1:nA])
 mem.E <- (nA*(nA+nB+1))/2
 mem.V <- (nA*nB*(nA+nB+1))/12
 mem.Z <- (mem.U - mem.E)/sqrt(mem.V)
-mem.P <- round((1-round(pnorm(round(abs(mem.Z), 2), 
-                              mean = 0, sd = 1), 3)) * 2, 3)
+mem.P <- pnorm(round(mem.Z, 2), mean = 0, sd = 1), 3)) * 2
   
 #wilcox.test(mem.df$Pleasant, mem.df$Unpleasant, exact = FALSE)
 
