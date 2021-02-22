@@ -25,9 +25,7 @@ a.U <- sum(a.df$StateRank[1:nA])
 a.E <- (nA*(nA+nB+1))/2
 a.V <- (nA*nB*(nA+nB+1))/12
 a.Z <- (a.U - a.E)/sqrt(a.V)
-a.P <- 
-  if (a.Z < 0) {
-    (1-round(pnorm(round(abs(a.Z), 2), mean = 0, sd = 1), 3)) * 2
-  } else {
-    (round(pnorm(round(a.Z, 2), mean = 0, sd = 1), 3)) * 2
-  }
+a.P <- round((1 - round(pnorm(round(abs(a.Z), 2), 
+                                mean = 0, sd = 1) ,4)) * 2, 3)
+# all the rounding is to mimic statistical tables (so that 
+# the answer is the same as the textbook answer)
