@@ -1,7 +1,7 @@
 library(tidyverse)
 
 # if data source is a file (use 'UTF-8-BOM' if 1st colname is prefixed by 'i..':
-# a.df.df <- read.csv("./path/to/file.csv", fileEncoding = "UTF-8-BOM") %>%
+# a.df <- read.csv("./path/to/file.csv", fileEncoding = "UTF-8-BOM") %>%
 
 # input = a.df;  change columns to 'Asample' and 'Bsample'
 a.df <- data.frame(
