@@ -1,0 +1,130 @@
+---
+output:
+  pdf_document:
+    latex_engine: pdflatex
+    keep_tex: true
+    template: "o:/dtma/tex/dt.tex"
+---
+
+```{r all_chunks, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      error = FALSE, 
+                      warning = FALSE, 
+                      message = FALSE, 
+                      include = TRUE, 
+                      fig.path = 'o:/dtma/figs')
+```
+
+```{r label = "load-pkgs"}
+packages <- c("ggplot2", "latex2exp", "tidyverse", "patchwork")
+xfun::pkg_attach(packages, install = TRUE, message = FALSE)
+```
+
+\pagestyle{empty}
+# Single Variable Linear Regression
+
+The data is from the dataset contained in Table 2 on page 7 of Unit 11. It records timber strength *y1*, specific gravity *x1*, and moisture content *x2*.
+
+In the plots, one data point hurt my eyes (!) so I chopped it (edit out *%>% filter(!(x1 == 0.499))* if you want it back). I know that I should either leave it in or run the analysis both with and without it but I leave that until I've got less time.
+
+```{r label = "data", echo = FALSE}
+# import data
+data.df <- read.csv('o:/m248/data/csvfiles/timber_strength.csv', 
+                    fileEncoding = "UTF-8-BOM") %>%
+  rename(
+    y1 = "Strength", 
+    x1 = "Specific.gravity", 
+    x2 = "Moisture.content"
+  ) %>% 
+  filter(!(x1 == 0.499))
+# data.df
+
+# create linear regression model:
+data.lm <- lm(y1 ~ x1, data = data.df)
+
+data.conf <- data.lm %>% 
+  predict(interval = 'confidence', level = 0.95) %>% 
+  as.data.frame() %>% 
+  rename(
+    conf.lo = lwr, 
+    conf.hi = upr
+  )
+
+data.pred <- data.lm %>% 
+  predict(interval = 'prediction', level = 0.95) %>% 
+  as.data.frame() %>% 
+  rename(
+    pred.lo = lwr, 
+    pred.hi = upr
+  )
+
+data.df <- cbind(data.df, data.conf[!names(data.conf) %in% names(data.df)])
+data.df <- cbind(data.df, data.pred[!names(data.pred) %in% names(data.df)])
+
+alpha <- round(as.numeric(data.lm$coefficients[1]), 2)
+beta <- round(as.numeric(data.lm$coefficients[2]), 2)
+```
+
+For the effect of just specific gravity on timber strength the simple linear regression model is given by:
+\[
+  Y_i = \alpha + \beta x_i + W_i = `r alpha` + `r beta` \, x_i + W_i \nonumber
+\]
+
+A scatterplot and diagnostic plots to assess assumptions of (a) zero mean and constant variance of residuals and (b) normal distribution of residuals around fitted values.
+
+```{r label = "plots", echo = FALSE, fig.height = 7}
+# alternative scatterplot (prefer this)
+p.scat <- ggplot(data = data.df, aes(x = x1)) +
+  geom_ribbon(
+    aes(ymin = conf.lo, ymax = conf.hi), 
+    fill = "bisque", linetype = "dashed", color = "chocolate", alpha = 0.5
+    ) +
+  geom_ribbon(
+    aes(ymin = pred.lo, ymax = pred.hi), 
+    fill = "beige", linetype = "dashed", color = "chocolate", alpha = 0.4
+    ) +
+  geom_line(
+    aes(y = fit), color = "chocolate"
+    ) +
+  geom_point(
+    aes(y = y1), color = "darkred"
+    ) + 
+  annotate(
+    "text", x = 0.54, y = 10.8,
+    label = paste("Timber strength =", round(coef(data.lm)[1], 2), " + ", abs(round(coef(data.lm)[2], 2)), " x  specific gravity")
+  ) +
+  labs(
+    title = "Scatterplot with regression line and 95% confidence and prediction bands", 
+    y = "Timber strength",
+    x = "Specific gravity" 
+  ) + 
+  theme_bw()
+
+# standardised residuals vs fitted values
+p.stres_fit <- ggplot(fortify(data.lm, data.df), aes(.fitted, .stdresid)) +
+  geom_point(color = "darkred") +
+  geom_hline(yintercept = 0, color = "chocolate") +
+  labs(
+    title="Std residuals vs Fitted values", 
+    y="Standardised residuals",
+    x="Fitted values" 
+  ) + 
+  theme_bw()
+
+# normal probability plot (QQ plot)
+p.qqplot <- ggplot(data.lm) +
+  stat_qq(aes(sample = .stdresid), color = "darkred") +
+  geom_abline(color = "chocolate") +
+  labs(
+    title="Normal probability plot (QQ plot)", 
+    y="",
+    x="Theoretical quantiles" 
+  ) + 
+  theme_bw()
+
+# void plot to create vertical gap in plat_layout()
+p.gap <- ggplot() + theme_void()
+
+p.scat / p.gap / (p.stres_fit | p.qqplot) +
+  plot_layout(heights = c(8, 1, 3))
+```
