@@ -3,7 +3,7 @@ output:
   pdf_document:
     latex_engine: pdflatex
     keep_tex: true
-    template: "o:/dtma/tex/dt.tex"
+    template: "drive:/path/to/template.tex"
 ---
 
 ```{r all_chunks, include=FALSE}
@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE, 
                       message = FALSE, 
                       include = TRUE, 
-                      fig.path = 'o:/dtma/figs')
+                      fig.path = 'drive:/path/to/figs')
 ```
 
 ```{r label = "load-pkgs"}
