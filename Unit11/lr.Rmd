@@ -25,18 +25,20 @@ xfun::pkg_attach(packages, install = TRUE, message = FALSE)
 
 The data is from the dataset contained in Table 2 on page 7 of Unit 11. It records timber strength *y1*, specific gravity *x1*, and moisture content *x2*.
 
-In the plots, one data point hurt my eyes (!) so I chopped it (edit out *%>% filter(!(x1 == 0.499))* if you want it back). I know that I should either leave it in or run the analysis both with and without it but I leave that until I've got less time.
+In the plots, one data point hurt my eyes (!) so I chopped it (edit out *%>% filter(!(x1 == 0.499))* if you want it back). 
+I know that I should either leave it in or run the analysis both with and without it but I leave that until I've got less time.
 
 ```{r label = "data", echo = FALSE}
-# import data
-data.df <- read.csv('o:/m248/data/csvfiles/timber_strength.csv', 
-                    fileEncoding = "UTF-8-BOM") %>%
+# Data from Table 2, Example 4, Unit 11, M248 copied into a CSV file
+# import data (fileEncoding = "UTF-8-BOM" is only needed if there is a non-ASCII character at the start of the 
+# first column name after importing the data ... it's a Windows thing, I think)
+data.df <- read.csv('timber_strength.csv', fileEncoding = "UTF-8-BOM") %>%
   rename(
     y1 = "Strength", 
     x1 = "Specific.gravity", 
     x2 = "Moisture.content"
   ) %>% 
-  filter(!(x1 == 0.499))
+  filter(!(x1 == 0.499))     # chop this filter for the full original dataset
 # data.df
 
 # create linear regression model:
