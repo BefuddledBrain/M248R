@@ -3,7 +3,7 @@ output:
   pdf_document:
     latex_engine: pdflatex
     keep_tex: true
-    template: "o:/dtma/tex/dt-tikz.tex"
+    template: "d:/path/to/template.tex"
 
 # fontsize: 11pt
 ---
@@ -13,8 +13,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       error = FALSE, 
                       warning = FALSE, 
                       message = FALSE, 
-                      include = TRUE, 
-                      fig.path = 'o:/dtma/figs')
+                      include = TRUE
 ```
 
 ```{r label = "load-pkgs"}
