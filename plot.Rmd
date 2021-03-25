@@ -23,7 +23,9 @@ xfun::pkg_attach(packages, install = TRUE, message = FALSE)
 \pagestyle{empty}
 # Creating a plot of a function in Rmarkdown using Pgfplots
 
-I am experimenting with the \LaTeX\ package Pgfplots because I haven't found a way to persuade 'Ggplot2' to produce maths-style plots, with the axes going through the origin. Sure, I can mimic the axes with 'geom_vline(xintercept = 0)' and 'geom_hline(yintercept = 0)' but then adding ticks and labels requires major faffing about.
+I am experimenting with the \LaTeX\ package Pgfplots because I haven't found a way to persuade 'Ggplot2' to produce maths-style plots, 
+with the axes going through the origin. Sure, I can mimic the axes with 'geom_vline(xintercept = 0)' and 'geom_hline(yintercept = 0)' 
+but then adding ticks and labels requires major faffing about.
 
 \begin{tikzpicture}
   \begin{axis}[
