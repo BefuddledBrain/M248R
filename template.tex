@@ -24,14 +24,34 @@
 \usepackage{array, mathtools, cancel}
 
 % Tikz and Pgfplots ---------------------------------------------------------------
+% Uncomment to use
 \RequirePackage{pgfplotstable}
 \RequirePackage{tikz}
 \RequirePackage{pgf}
 \RequirePackage{pgfplots}
 \pgfplotsset{compat=1.15}
+\pgfplotsset{dtaxis/.style = {
+          width = 12cm, 
+          title style = { at = {(0, 1)}, 
+                          yshift = 5mm, 
+                          font = \normalsize, 
+                          }, 
+          axis lines = middle, 
+          enlargelimits = true, 
+          axis line style = {thick, black}, 
+          label style = {font = \normalsize, }, 
+          xlabel style = {anchor = west, }, 
+          ylabel style = {anchor = south, }, 
+          tick style = {thick, black}, 
+          tick label style = {font = \footnotesize}, 
+          tick align = outside, 
+          major tick length = {0.6mm}, 
+}}
+
+% Re-enable this group if Tikz is used:
 \usetikzlibrary{shapes.geometric, pgfplots.groupplots}
 \usetikzlibrary{positioning, arrows, patterns, intersections, through}
-\usetikzlibrary{calc, math}
+\usetikzlibrary{calc, math, colorbrewer}
 
 \usepackage{ifxetex,ifluatex}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
